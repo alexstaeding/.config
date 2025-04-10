@@ -11,6 +11,10 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    mac-app-util = {
+      url = "github:hraban/mac-app-util";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     algotex = {
       url = "github:alexstaeding/AlgoTeX/fix/flake";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -27,6 +31,7 @@
     nixpkgs,
     nix-darwin,
     home-manager,
+    mac-app-util,
     algotex,
     plasma-manager,
     ...
@@ -87,11 +92,15 @@
         specialArgs = { inherit inputs outputs self; };
         modules = [
           ./nix-darwin/configuration.nix
+          mac-app-util.darwinModules.default
           home-manager.darwinModules.home-manager {
             home-manager.users.alex.imports = [
               ./home-manager/home.nix
               ./home-manager/extra-macos.nix
               ./home-manager/nano-module.nix
+            ];
+            home-manager.sharedModules = [
+              mac-app-util.homeManagerModules.default
             ];
             home-manager.extraSpecialArgs = {
               inherit inputs outputs;
